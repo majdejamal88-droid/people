@@ -191,7 +191,7 @@ if (error) {
         location.href = "person.html?name=" + encodeURIComponent(person.name);
     }
 }
-function deletePerson() {
+async function deletePerson() {
 
     let confirmDelete = confirm(
         "هل أنت متأكد أنك تريد حذف " + person.name + "؟ 🗑️"
@@ -199,12 +199,14 @@ function deletePerson() {
 
     if (confirmDelete) {
 
-        people = people.filter(function(p) {
-            return p.name !== person.name;
-        });
-
-        localStorage.setItem("people", JSON.stringify(people));
-
+        const { error } = await supabaseClient
+    .from("people")
+    .delete()
+    .eq("id", person.id);
+if (error) {
+    alert("❌ حدث خطأ أثناء حذف الشخص: " + error.message);
+    return;
+}
         alert("تم حذف الشخص بنجاح 🗑️");
 
         window.location.href = "index.html";
