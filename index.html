@@ -972,13 +972,13 @@ body {
 
 <script>
 
-let people = JSON.parse(localStorage.getItem("people")) || [];
+let people = [];
 people = people.filter(function(person) {
     return person.name !== null && person.name !== "null";
 });
 
 localStorage.setItem("people", JSON.stringify(people));
-function addPerson() {
+async function addPerson() {
 
     let name = document.getElementById("name").value;
     let country = document.getElementById("country").value;
@@ -1015,14 +1015,33 @@ if (existingPerson) {
     email: email,
     dateAdded: new Date().toLocaleDateString("ar-EG")
 };
+const { data: { user } } = await supabaseClient.auth.getUser();
 
-    people.push(person);
+if (!user) {
+    alert("❌ يجب تسجيل الدخول أولاً");
+    return;
+}
 
-    localStorage.setItem("people", JSON.stringify(people));
+const { error } = await supabaseClient
+    .from("people")
+    .insert({
+        owner_id: user.id,
+        name: name,
+        country: country,
+        university: university,
+        major: major,
+        phone: phone,
+        email: email
+    });
 
-    showPeople();
+if (error) {
+    alert("❌ حدث خطأ أثناء إضافة الشخص: " + error.message);
+    return;
+}
 
-    alert("تمت إضافة الشخص بنجاح ✅");
+await loadPeopleFromSupabase();
+
+alert("✅ تمت إضافة الشخص بنجاح");
 }
 
 
@@ -1150,7 +1169,7 @@ function searchPerson() {
                     "<br>🌍 <strong>البلد:</strong> " + person.country +
                     "<br>🎓 <strong>الجامعة:</strong> " + person.university +
                     "<br>📚 <strong>التخصص:</strong> " + person.major +
-                    "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.dateAdded || "غير محدد") +
+                    "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.date_added || person.dateAdded || "غير محدد") +
                     "<br>📞 <strong>رقم الهاتف:</strong> <a href=\"tel:" + person.phone + "\">" + person.phone + "</a>" +
                     "<br>💬 <a href=\"https://wa.me/" +
                     (person.phone || "").replace(/\D/g, "").replace(/^0/, "970") +
@@ -1240,7 +1259,7 @@ document.getElementById("majorCount").innerHTML =
             "<br>🌍 <strong>البلد:</strong> " + person.country +
             "<br>🎓 <strong>الجامعة:</strong> " + person.university +
             "<br>📚 <strong>التخصص:</strong> " + person.major +
-            "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.dateAdded || "غير محدد") +
+            "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.date_added || person.dateAdded || "غير محدد") +
             "<br>📞 <strong>رقم الهاتف:</strong> <a href=\"tel:" + person.phone + "\">" + person.phone + "</a>" +
             "<br><button class=\"copy-phone-btn\" onclick=\"copyPhone('" + person.phone + "')\">📋 نسخ الرقم</button>" +
 "<br>💬 <a href=\"https://wa.me/" + (person.phone || "").replace(/\D/g, "").replace(/^0/, "970") + "\" target=\"_blank\" class=\"whatsapp-btn\">🟢 فتح واتساب</a>" +
@@ -1432,7 +1451,7 @@ function filterByCountry() {
             "<br>🌍 <strong>البلد:</strong> " + person.country +
             "<br>🎓 <strong>الجامعة:</strong> " + person.university +
             "<br>📚 <strong>التخصص:</strong> " + person.major +
-            "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.dateAdded || "غير محدد") +
+            "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.date_added || person.dateAdded || "غير محدد") +
             "<br>📞 <strong>رقم الهاتف:</strong> <a href=\"tel:" + person.phone + "\">" + person.phone + "</a>" +
             "<br><button class=\"copy-phone-btn\" onclick=\"copyPhone('" + person.phone + "')\">📋 نسخ الرقم</button>" +
             "<br>💬 <a href=\"https://wa.me/" + (person.phone || "").replace(/\D/g, "").replace(/^0/, "970") + "\" target=\"_blank\" class=\"whatsapp-btn\">🟢 فتح واتساب</a>" +
@@ -1489,7 +1508,7 @@ function filterByUniversity() {
             "<br>🌍 <strong>البلد:</strong> " + person.country +
             "<br>🎓 <strong>الجامعة:</strong> " + person.university +
             "<br>📚 <strong>التخصص:</strong> " + person.major +
-            "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.dateAdded || "غير محدد") +
+            "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.date_added || person.dateAdded || "غير محدد") +
             "<br>📞 <strong>رقم الهاتف:</strong> " + person.phone +
             "</p>";
 
@@ -1526,7 +1545,7 @@ function filterByMajor() {
             "<br>🌍 <strong>البلد:</strong> " + person.country +
             "<br>🎓 <strong>الجامعة:</strong> " + person.university +
             "<br>📚 <strong>التخصص:</strong> " + person.major +
-            "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.dateAdded || "غير محدد") +
+            "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.date_added || person.dateAdded || "غير محدد") +
             "<br>📞 <strong>رقم الهاتف:</strong> " + person.phone +
             "</p>";
 
@@ -1610,9 +1629,23 @@ async function signIn() {
         alert("❌ " + error.message);
     } else {
         alert("✅ تم تسجيل الدخول بنجاح");
+        await loadPeopleFromSupabase();
     }
 }
+async function loadPeopleFromSupabase() {
+    const { data, error } = await supabaseClient
+        .from("people")
+        .select("*")
+        .order("date_added", { ascending: false });
 
+    if (error) {
+        console.error("خطأ في تحميل الأشخاص:", error);
+        return;
+    }
+
+    people = data || [];
+    showPeople();
+}
 
 
 
