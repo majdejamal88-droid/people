@@ -97,13 +97,13 @@ let personName = new URLSearchParams(window.location.search).get("name");
 
 let people = [];
 
-async function loadPersonDetails() {
-  const { data: person, error } = await supabaseClient
+let person = null;
+  const { data, error } = await supabaseClient
     .from("people")
     .select("*")
     .eq("name", personName)
     .maybeSingle();
-
+person = data;
 if (error) {
     console.error("خطأ في تحميل بيانات الشخص:", error);
 }
@@ -146,7 +146,7 @@ function copyEmail(email) {
     navigator.clipboard.writeText(email);
     alert("تم نسخ الإيميل 📋✅");
 }
-function editPerson() {
+async function editPerson() {
 
     let newName = prompt("اكتب الاسم الجديد:", person.name);
     let newCountry = prompt("اكتب البلد الجديد:", person.country);
@@ -171,8 +171,21 @@ function editPerson() {
         person.phone = newPhone;
         person.email = newEmail;
 
-        localStorage.setItem("people", JSON.stringify(people));
-
+        const { error } = await supabaseClient
+    .from("people")
+    .update({
+        name: newName,
+        country: newCountry,
+        university: newUniversity,
+        major: newMajor,
+        phone: newPhone,
+        email: newEmail
+    })
+    .eq("id", person.id);
+if (error) {
+    alert("❌ حدث خطأ أثناء تعديل البيانات: " + error.message);
+    return;
+}
         alert("تم تعديل البيانات بنجاح ✅");
 
         location.href = "person.html?name=" + encodeURIComponent(person.name);
