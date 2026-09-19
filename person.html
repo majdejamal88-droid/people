@@ -98,6 +98,7 @@ let personName = new URLSearchParams(window.location.search).get("name");
 let people = [];
 
 let person = null;
+async function loadPersonDetails() {
   const { data, error } = await supabaseClient
     .from("people")
     .select("*")
