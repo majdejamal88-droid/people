@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل الشخص</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #E3F2FD, #E8F5E9);
+        text-align: center;
+        margin: 0;
+        padding: 30px;
+    }
+
+    .container {
+        background-color: white;
+        width: 500px;
+        max-width: 90%;
+        margin: auto;
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.16);
+    }
+
+    h1 {
+        color: #2E7D32;
+        margin-bottom: 25px;
+    }
+
+    #personDetails {
+        text-align: right;
+    }
+
+    #personDetails h2 {
+        color: #2E7D32;
+        font-size: 26px;
+        border-bottom: 3px solid #4CAF50;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    #personDetails p {
+        background-color: #f8f9fa;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 10px;
+        font-size: 17px;
+        line-height: 1.8;
+    }
+    @media print {
+    button {
+        display: none;
+    }
+
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .container {
+        box-shadow: none;
+        width: 100%;
+        max-width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+    <div class="container">
+
+   <h1>👤 بطاقة الشخص</h1>
+<p>📋 جميع المعلومات والتفاصيل</p>
+
+    <div id="personDetails"></div>
+    <hr>
+<button onclick="editPerson()">🖊️ تعديل البيانات</button>
+<button onclick="copyAllDetails()">📋 نسخ كل البيانات</button>
+<button onclick="deletePerson()">🗑️ حذف الشخص</button>
+<button onclick="window.print()">🖨️ طباعة التفاصيل</button>
+<hr>
+<p>⬅️ العودة إلى قائمة الأشخاص</p>
+<button onclick="window.location.href='index.html'">🏠 الصفحة الرئيسية</button>
+<br>
+<button onclick="location.reload()">🔄 تحديث الصفحة</button>
+
+</div>
+<script>
+
+let personName = new URLSearchParams(window.location.search).get("name");
+
+let people = JSON.parse(localStorage.getItem("people")) || [];
+
+let person = people.find(function(person) {
+    return person.name === personName;
+});
+
+if (person) {
+
+    document.getElementById("personDetails").innerHTML =
+        "<h2>👤 " + person.name + "</h2>" +
+        "<p>🌍 البلد: " + person.country + "</p>" +
+        "<p>🎓 الجامعة: " + person.university + "</p>" +
+        "<p>📚 التخصص: " + person.major + "</p>" +
+        "<p>📅 تاريخ الإضافة: " + (person.dateAdded || "غير محدد") + "</p>" +
+        "<p>📞 رقم الهاتف: <a href=\"tel:" + person.phone + "\">" + person.phone + "</a></p>" +
+        "<button onclick=\"copyPhone('" + person.phone + "')\">📋 نسخ الرقم</button>" +
+        "<a href=\"https://wa.me/" +
+        (person.phone || "").replace(/\D/g, "").replace(/^0/, "970") +
+        "\" target=\"_blank\" class=\"whatsapp-btn\">🟢 فتح واتساب</a>" +
+        "<p>📧 الإيميل: <a href=\"mailto:" + person.email + "\">" + person.email + "</a></p>" +
+        "<button onclick=\"copyEmail('" + person.email + "')\">📋 نسخ الإيميل</button>";
+
+} else {
+
+    document.getElementById("personDetails").innerHTML =
+        "<p>❌ لم يتم العثور على هذا الشخص.</p>" +
+        "<p>ربما تم حذف بياناته أو أن الرابط غير صحيح.</p>";
+
+}
+
+    
+function copyPhone(phone) {
+    navigator.clipboard.writeText(phone);
+    alert("تم نسخ رقم الهاتف 📋✅");
+}
+function copyEmail(email) {
+    navigator.clipboard.writeText(email);
+    alert("تم نسخ الإيميل 📋✅");
+}
+function editPerson() {
+
+    let newName = prompt("اكتب الاسم الجديد:", person.name);
+    let newCountry = prompt("اكتب البلد الجديد:", person.country);
+    let newUniversity = prompt("اكتب الجامعة الجديدة:", person.university);
+    let newMajor = prompt("اكتب التخصص الجديد:", person.major);
+    let newPhone = prompt("اكتب رقم الهاتف الجديد:", person.phone);
+    let newEmail = prompt("اكتب الإيميل الجديد:", person.email);
+
+    if (
+        newName !== null &&
+        newCountry !== null &&
+        newUniversity !== null &&
+        newMajor !== null &&
+        newPhone !== null &&
+        newEmail !== null
+    ) {
+
+        person.name = newName;
+        person.country = newCountry;
+        person.university = newUniversity;
+        person.major = newMajor;
+        person.phone = newPhone;
+        person.email = newEmail;
+
+        localStorage.setItem("people", JSON.stringify(people));
+
+        alert("تم تعديل البيانات بنجاح ✅");
+
+        location.href = "person.html?name=" + encodeURIComponent(person.name);
+    }
+}
+function deletePerson() {
+
+    let confirmDelete = confirm(
+        "هل أنت متأكد أنك تريد حذف " + person.name + "؟ 🗑️"
+    );
+
+    if (confirmDelete) {
+
+        people = people.filter(function(p) {
+            return p.name !== person.name;
+        });
+
+        localStorage.setItem("people", JSON.stringify(people));
+
+        alert("تم حذف الشخص بنجاح 🗑️");
+
+        window.location.href = "index.html";
+    }
+}
+function copyAllDetails() {
+
+ let details =
+    "👤 بيانات الشخص\n" +
+    "━━━━━━━━━━━━━━\n" +
+    "الاسم: " + person.name + "\n" +
+    "البلد: " + person.country + "\n" +
+    "الجامعة: " + person.university + "\n" +
+    "التخصص: " + person.major + "\n" +
+    "تاريخ الإضافة: " + (person.dateAdded || "غير محدد") + "\n" +
+    "رقم الهاتف: " + person.phone + "\n" +
+    "الإيميل: " + person.email + "\n" +
+    "واتساب: " + person.phone;
+
+    navigator.clipboard.writeText(details);
+
+    alert("تم نسخ جميع بيانات الشخص 📋✅");
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>برنامج معلومات الأشخاص</title>
+
+    <style>
+       body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e3f2fd, #f1f8e9);
+    text-align: center;
+    margin: 0;
+    padding: 30px;
+}
+
+.container {
+    background-color: white;
+    width: 500px;
+    max-width: 90%;
+    margin: auto;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+h1 {
+    color: #2e7d32;
+}
+
+h2 {
+    color: #444;
+    margin-top: 30px;
+}
+
+input {
+    width: 90%;
+    padding: 14px;
+    margin: 8px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+#importFile {
+    display: none;
+}
+
+.import-btn {
+    display: inline-block;
+    background-color: #00897B;
+    color: white;
+    padding: 13px 25px;
+    margin: 10px 5px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.import-btn:hover {
+    background-color: #388E3C;
+}
+input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76,175,80,0.4);
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 13px 25px;
+    margin: 10px 5px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #388E3C;
+}
+
+#peopleList {
+    margin-top: 20px;
+}
+
+#peopleList p {
+    background-color: #f8f9fa;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 15px;
+    border-right: 6px solid #4CAF50;
+    text-align: right;
+    line-height: 2;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+
+#peopleList p:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+.delete-btn {
+   background-color: #C62828;
+}
+
+.delete-btn:hover {
+    background-color: darkred;
+}
+.edit-btn {
+background-color: #1565C0;
+}
+
+.edit-btn:hover {
+    background-color: #1976D2;
+}
+/* زر الإضافة */
+button[onclick="addPerson()"] {
+background-color: #1976D2;
+}
+
+/* زر مسح الكل */
+button[onclick="deleteAll()"] {
+    background-color: #C62828;
+}
+
+/* زر الترتيب */
+button[onclick="sortPeople()"] {
+    background-color: #7B1FA2;
+}
+button[onclick="deleteAll()"]:hover {
+    background-color: #d32f2f;
+}
+
+button[onclick="sortPeople()"]:hover {
+    background-color: #1976D2;
+}
+.count-card {
+    background-color: #1976D2;
+    color: white;
+    padding: 15px;
+    margin: 20px auto;
+    border-radius: 15px;
+    width: 100%;
+max-width: 180px;
+    text-align: center;
+}
+
+.count-card h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.count-card p {
+    font-size: 28px;
+    margin: 10px 0 0;
+    font-weight: bold;
+}
+.dark-mode {
+    background-color: #222;
+    color: white;
+}
+
+.dark-mode .container {
+    background-color: #333;
+}
+
+.dark-mode h1,
+.dark-mode h2 {
+    color: white;
+}
+.dark-mode #peopleList p {
+    color: #222;
+}
+.whatsapp-btn {
+    display: inline-block;
+    background-color: #25D366;
+    color: white;
+    text-decoration: none;
+    padding: 8px 15px;
+    margin-top: 8px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.whatsapp-btn:hover {
+    background-color: #128C7E;
+}
+.person-name {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    color: #2e7d32;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e0e0e0;
+}
+.copy-phone-btn,
+.copy-email-btn {
+    background-color: #546E7A;
+ 
+    color: white;
+    padding: 7px 14px;
+    margin: 5px 3px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+.copy-email-btn {
+    background-color: #7B1FA2;
+}
+
+.copy-email-btn:hover {
+    background-color: #6A1B9A;
+}
+
+.copy-phone-btn:hover,
+.copy-email-btn:hover {
+    background-color: #455A64;
+}
+.delete-btn,
+.edit-btn {
+    padding: 9px 16px;
+    margin: 6px 3px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+}
+.search-box {
+    width: 100%;
+    margin: 10px auto;
+}
+
+.search-box input {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 17px;
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px solid #1976D2;
+    background-color: white;
+    transition: 0.3s;
+}
+.country-filter {
+    border: 2px solid #43A047;
+}
+.university-filter {
+    border: 2px solid #8E44AD;
+}
+.major-filter {
+    border: 2px solid #F57C00;
+}
+select {
+    width: 90%;
+    padding: 13px;
+    margin: 8px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: white;
+    cursor: pointer;
+}
+
+select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76,175,80,0.4);
+}
+.clear-filters-btn {
+    background-color: #546E7A;
+    color: white;
+    padding: 11px 20px;
+    margin: 8px 5px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.clear-filters-btn:hover {
+    background-color: #455A64;
+}
+#peopleList p {
+    font-size: 16px;
+}
+
+#peopleList p strong {
+    line-height: 1.8;
+}
+
+#peopleList a {
+    color: #1976D2;
+    font-weight: bold;
+}
+.person-name {
+    font-size: 24px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 12px;
+}
+.dark-mode #peopleList p {
+    background-color: #444;
+    color: white;
+    border-right-color: #66BB6A;
+}
+
+.dark-mode .person-name {
+    color: #81C784;
+    border-bottom-color: #666;
+}
+
+.dark-mode #peopleList a {
+    color: #64B5F6;
+}
+#darkModeBtn {
+   background-color: #6A1B9A;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+button[onclick="exportPeople()"] {
+    background-color: #00897B;
+}
+
+button[onclick="exportPeople()"]:hover {
+    background-color: #00695C;
+}
+
+#darkModeBtn:hover {
+    background-color: #263238;
+}
+.filter-actions {
+    margin-top: 5px;
+    text-align: center;
+}
+@media (max-width: 600px) {
+
+    body {
+        padding: 15px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 100%;
+        padding: 20px 10px;
+        box-sizing: border-box;
+    }
+
+}
+@media (max-width: 600px) {
+
+    button,
+    .import-btn,
+    select {
+        width: 95%;
+        box-sizing: border-box;
+        margin: 7px auto;
+    }
+
+}
+@media (max-width: 600px) {
+
+    h1 {
+       font-size: 28px;
+        line-height: 1.5;
+        margin-top: 10px;
+    }
+
+    #welcome {
+        font-size: 17px;
+        margin-bottom: 20px;
+    }
+
+}
+@media (max-width: 600px) {
+
+    .count-card {
+        width: 90%;
+        box-sizing: border-box;
+        padding: 14px;
+        margin: 20px auto;
+    }
+
+    .count-card p {
+        font-size: 24px;
+    }
+
+}
+@media (max-width: 600px) {
+
+    select {
+        width: 95%;
+        padding: 12px;
+        font-size: 15px;
+        margin: 6px auto;
+    }
+
+}
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.stats-container .count-card {
+    width: auto;
+    max-width: none;
+    margin: 10px 0;
+    padding: 15px 8px;
+    min-height: 110px;
+    box-sizing: border-box;
+}
+.stats-container .count-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.stats-container .count-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+.country-card {
+    background-color: #43A047;
+}
+.major-card {
+    background-color: #F57C00;
+}
+.stats-container .count-card:nth-child(3) {
+    background-color: #8E44AD;
+}
+.dark-mode .stats-container .count-card {
+    color: white;
+}
+/* ترتيب أزرار بطاقة الشخص */
+#peopleList p button {
+    display: inline-block;
+    margin: 8px 4px 4px 4px;
+    vertical-align: middle;
+}
+
+/* مسافة أفضل بين أزرار البطاقة */
+#peopleList p .delete-btn,
+#peopleList p .edit-btn {
+    margin-top: 12px;
+}
+
+/* ترتيب أزرار النسخ */
+#peopleList p .copy-phone-btn,
+#peopleList p .copy-email-btn {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+/* تحسين ترتيب معلومات بطاقة الشخص */
+#peopleList p {
+    padding: 22px;
+    line-height: 2.2;
+}
+
+#peopleList p strong {
+    margin-left: 4px;
+}
+
+/* مسافة بين بيانات الشخص */
+#peopleList p br {
+    line-height: 1.8;
+}
+/* تحسين شكل رقم الهاتف والإيميل */
+#peopleList p a[href^="tel:"] {
+    color: #00897B;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#peopleList p a[href^="mailto:"] {
+    color: #7B1FA2;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#peopleList p a[href^="tel:"]:hover,
+#peopleList p a[href^="mailto:"]:hover {
+    text-decoration: underline;
+}
+/* منطقة أزرار بطاقة الشخص */
+#peopleList p .whatsapp-btn,
+#peopleList p .copy-phone-btn,
+#peopleList p .copy-email-btn,
+#peopleList p .delete-btn,
+#peopleList p .edit-btn {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    transition: 0.2s;
+}
+
+#peopleList p .whatsapp-btn:hover,
+#peopleList p .copy-phone-btn:hover,
+#peopleList p .copy-email-btn:hover,
+#peopleList p .delete-btn:hover,
+#peopleList p .edit-btn:hover {
+    transform: translateY(-2px);
+}
+/* تحسين عنوان اسم الشخص */
+.person-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2E7D32;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #4CAF50;
+    text-align: right;
+}
+/* إبراز أسماء الحقول داخل البطاقة */
+#peopleList p strong:not(.person-name) {
+    color: #37474F;
+    font-weight: bold;
+}
+.dark-mode #peopleList p strong:not(.person-name) {
+    color: white;
+}
+/* حركة بطاقة الشخص عند تمرير الماوس */
+#peopleList p {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+#peopleList p:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+}
+/* تحسين ظل بطاقات الأشخاص في الوضع الليلي */
+.dark-mode #peopleList p {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+/* تحسين زر واتساب */
+#peopleList p .whatsapp-btn {
+    padding: 9px 16px;
+    margin: 6px 3px;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    transition: 0.2s;
+}
+
+#peopleList p .whatsapp-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+/* تحسين زر واتساب في الوضع الليلي */
+.dark-mode #peopleList p .whatsapp-btn {
+    background-color: #1B8A4B;
+}
+
+.dark-mode #peopleList p .whatsapp-btn:hover {
+    background-color: #146B3A;
+}
+/* تحسين زر الوضع الليلي */
+#darkModeBtn {
+    transition: 0.2s;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+#darkModeBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+.dark-mode #darkModeBtn {
+    background-color: #424242;
+}
+
+.dark-mode #darkModeBtn:hover {
+    background-color: #616161;
+}
+/* تحسين خانة البحث عند الضغط عليها */
+.search-box input:focus {
+    border-color: #1565C0;
+    box-shadow: 0 0 8px rgba(21,101,192,0.35);
+    transform: scale(1.01);
+}
+/* تحسين الفلاتر عند التركيز */
+select:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(76,175,80,0.35);
+    transform: scale(1.01);
+    transition: 0.2s;
+}
+/* تحسين زر إلغاء الفلاتر */
+.clear-filters-btn {
+    transition: 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.clear-filters-btn:hover {
+    background-color: #37474F;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+/* حركة بطاقات الإحصائيات */
+.stats-container .count-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stats-container .count-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+/* تحسين عنوان التطبيق */
+h1 {
+    font-size: 34px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.12);
+}
+/* تحسين رسالة الترحيب */
+#welcome {
+    color: #546E7A;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 8px 0 20px;
+    transition: 0.2s;
+}
+
+.dark-mode #welcome {
+    color: #B0BEC5;
+}
+/* تحسين زر تغيير الاسم */
+button[onclick="changeUserName()"] {
+    background-color: #546E7A;
+    padding: 10px 18px;
+    font-size: 14px;
+    transition: 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+button[onclick="changeUserName()"]:hover {
+    background-color: #37474F;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+/* ترتيب الأزرار الرئيسية */
+.container > button {
+    margin: 8px 5px;
+    transition: 0.2s;
+}
+
+.container > button:hover {
+    transform: translateY(-2px);
+}
+/* تنسيق أزرار التصدير والاستيراد */
+button[onclick="exportPeople()"],
+.import-btn {
+    box-shadow: 0 3px 7px rgba(0,0,0,0.15);
+    transition: 0.2s;
+}
+
+button[onclick="exportPeople()"]:hover,
+.import-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+/* تحسين زر إضافة الشخص */
+button[onclick="addPerson()"] {
+    box-shadow: 0 3px 8px rgba(25,118,210,0.25);
+    transition: 0.2s;
+}
+
+button[onclick="addPerson()"]:hover {
+    background-color: #1565C0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(25,118,210,0.3);
+}
+/* تحسين زر حذف الكل */
+button[onclick="deleteAll()"] {
+    box-shadow: 0 3px 8px rgba(198,40,40,0.25);
+    transition: 0.2s;
+}
+
+button[onclick="deleteAll()"]:hover {
+    background-color: #B71C1C;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(198,40,40,0.3);
+}
+/* تحسين زر ترتيب الأشخاص */
+button[onclick="sortPeople()"] {
+    box-shadow: 0 3px 8px rgba(123,31,162,0.25);
+    transition: 0.2s;
+}
+
+button[onclick="sortPeople()"]:hover {
+    background-color: #6A1B9A;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(123,31,162,0.3);
+}
+/* تحسين حقول إدخال البيانات */
+input:focus {
+    transform: scale(1.01);
+    transition: 0.2s;
+}
+/* تحسين حقول الإدخال في الوضع الليلي */
+.dark-mode input,
+.dark-mode select {
+    background-color: #424242;
+    color: white;
+    border-color: #777;
+}
+
+.dark-mode input::placeholder {
+    color: #BDBDBD;
+}
+/* تحسين الفلاتر في الوضع الليلي */
+.dark-mode select {
+    background-color: #424242;
+    color: white;
+}
+
+.dark-mode select option {
+    background-color: #424242;
+    color: white;
+}
+/* تحسين خانة البحث في الوضع الليلي */
+.dark-mode .search-box input {
+    background-color: #424242;
+    color: white;
+    border-color: #64B5F6;
+}
+
+.dark-mode .search-box input::placeholder {
+    color: #BDBDBD;
+}
+/* تحسين رسالة عدم وجود أشخاص */
+#peopleList > p {
+    text-align: center;
+    color: #607D8B;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 25px;
+}
+
+.dark-mode #peopleList > p {
+    color: #CFD8DC;
+}
+/* تحسين حقل الإيميل */
+input[type="email"] {
+    border: 2px solid #7B1FA2;
+}
+
+input[type="email"]:focus {
+    border-color: #6A1B9A;
+    box-shadow: 0 0 8px rgba(123,31,162,0.3);
+}
+/* تحسين حقل رقم الهاتف */
+input#phone {
+    border: 2px solid #00897B;
+}
+
+input#phone:focus {
+    border-color: #00695C;
+    box-shadow: 0 0 8px rgba(0,137,123,0.3);
+}
+/* تحسين حقل الاسم */
+input#name {
+    border: 2px solid #1976D2;
+}
+
+input#name:focus {
+    border-color: #1565C0;
+    box-shadow: 0 0 8px rgba(25,118,210,0.3);
+}
+/* تحسين حقل البلد */
+input#country {
+    border: 2px solid #43A047;
+}
+
+input#country:focus {
+    border-color: #2E7D32;
+    box-shadow: 0 0 8px rgba(67,160,71,0.3);
+}
+/* تحسين حقل الجامعة */
+input#university {
+    border: 2px solid #8E44AD;
+}
+
+input#university:focus {
+    border-color: #7B1FA2;
+    box-shadow: 0 0 8px rgba(142,68,173,0.3);
+}
+/* تحسين حقل التخصص */
+input#major {
+    border: 2px solid #F57C00;
+}
+
+input#major:focus {
+    border-color: #EF6C00;
+    box-shadow: 0 0 8px rgba(245,124,0,0.3);
+}
+/* حركة ناعمة لحقول الإدخال */
+input,
+select {
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+/* تحسين ظل حاوية التطبيق */
+.container {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.16);
+    transition: 0.3s;
+}
+/* تحسين خلفية التطبيق في الوضع الليلي */
+.dark-mode {
+    background: linear-gradient(135deg, #1B1B1B, #263238);
+}
+/* تحسين الحاوية في الوضع الليلي */
+.dark-mode .container {
+    background-color: #303030;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.45);
+}
+/* تحسين العناوين الفرعية */
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-bottom: 18px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+/* تحسين أرقام الإحصائيات */
+.stats-container .count-card p {
+    font-size: 30px;
+    font-weight: bold;
+    margin: 12px 0 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+/* تحسين عناوين الإحصائيات */
+.stats-container .count-card h3 {
+    font-size: 17px;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.5;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+/* توحيد ارتفاع بطاقات الإحصائيات */
+.stats-container {
+    align-items: stretch;
+}
+
+.stats-container .count-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+/* تنعيم بطاقات الإحصائيات */
+.stats-container .count-card {
+    border-radius: 18px;
+}
+/* تحسين خلفية الوضع العادي */
+body {
+    background: linear-gradient(135deg, #E3F2FD, #E8F5E9);
+}
+/* تحسين روابط الهاتف والإيميل */
+#peopleList p a[href^="tel:"],
+#peopleList p a[href^="mailto:"] {
+    transition: 0.2s;
+}
+
+#peopleList p a[href^="tel:"]:hover,
+#peopleList p a[href^="mailto:"]:hover {
+    opacity: 0.75;
+}
+.searchResult .person-name a {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.searchResult .person-name a:hover {
+    text-decoration: underline;
+}
+.clear-search-btn {
+    background-color: #607D8B;
+    color: white;
+    padding: 11px 20px;
+    margin: 8px 5px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.clear-search-btn:hover {
+    background-color: #455A64;
+    transform: translateY(-2px);
+}
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>برنامج معلومات الأشخاص</h1>
+<h3 id="welcome"></h3>
+        <h2>إضافة شخص</h2>
+
+       <input type="text" id="name" placeholder="اكتب الاسم">
+
+<input type="text" id="country" placeholder="اكتب البلد">
+
+<input type="text" id="university" placeholder="اكتب الجامعة">
+
+<input type="text" id="major" placeholder="اكتب التخصص">
+
+<input type="text" id="phone" placeholder="اكتب رقم الهاتف">
+
+<input type="email" id="email" placeholder="اكتب الإيميل">
+        <br><br>
+
+        <button onclick="addPerson()">إضافة الشخص</button>
+        <button onclick="exportPeople()">📄 تصدير البيانات</button>
+        <label for="importFile" class="import-btn">📥 استيراد البيانات</label>
+<input type="file" id="importFile" accept=".json" onchange="importPeople()">
+        <button onclick="deleteAll()">🗑️ مسح كل الأشخاص</button>
+        <button onclick="sortPeople()">🔤 ترتيب حسب الاسم</button>
+        <button id="darkModeBtn" onclick="toggleDarkMode()">🌙 الوضع الليلي</button>
+        <button onclick="changeUserName()">✏️ تغيير اسمي</button>
+       
+        <h2>البحث عن شخص</h2>
+    
+
+<div class="search-box">
+<input type="text" id="searchName" placeholder="🔎 ابحث بالاسم أو البلد أو الجامعة أو التخصص..." oninput="searchPerson()" onkeydown="if(event.key==='Enter') searchPerson()">
+<button class="clear-search-btn" onclick="clearSearch()">🧹 مسح البحث</button>
+</div>
+<select id="countryFilter" class="country-filter" onchange="filterByCountry()">
+    <option value="">🌍 كل البلدان</option>
+</select>
+<select id="universityFilter" class="university-filter" onchange="filterByUniversity()">
+    <option value="">🎓 كل الجامعات</option>
+</select>
+<select id="majorFilter" class="major-filter" onchange="filterByMajor()">
+    <option value="">📚 كل التخصصات</option>
+</select>
+<div class="filter-actions">
+    <button class="clear-filters-btn" onclick="clearFilters()">🔄 إلغاء الفلاتر</button>
+</div>
+<br><br>
+
+<button onclick="searchPerson()">بحث 🔍</button>
+
+<div id="searchResult"></div>
+
+<h2>الأشخاص المضافون</h2>
+<div class="stats-container">
+<div class="count-card">
+    <h3>👥 عدد الأشخاص</h3>
+    <p id="count">0</p>
+</div>
+<div class="count-card country-card">
+    <h3>🌍 عدد البلدان</h3>
+    <p id="countryCount">0</p>
+</div>
+<div class="count-card">
+    <h3>🎓 عدد الجامعات</h3>
+    <p id="universityCount">0</p>
+</div>
+<div class="count-card major-card">
+    <h3>📚 عدد التخصصات</h3>
+    <p id="majorCount">0</p>
+</div>
+</div>
+<div id="peopleList"></div>
+
+<script>
+
+let people = JSON.parse(localStorage.getItem("people")) || [];
+people = people.filter(function(person) {
+    return person.name !== null && person.name !== "null";
+});
+
+localStorage.setItem("people", JSON.stringify(people));
+function addPerson() {
+
+    let name = document.getElementById("name").value;
+    let country = document.getElementById("country").value;
+    let university = document.getElementById("university").value;
+    let major = document.getElementById("major").value;
+    let phone = document.getElementById("phone").value;
+    let email = document.getElementById("email").value;
+let existingPerson = people.find(function(person) {
+    return person.name.trim().toLowerCase() === name.trim().toLowerCase();
+});
+
+if (existingPerson) {
+   alert("⚠️ هذا الشخص موجود مسبقًا!\n💡 إذا أردت تغيير بياناته، استخدم زر «تعديل».");
+    return;
+}
+    if (
+        name === "" ||
+        country === "" ||
+        university === "" ||
+        major === "" ||
+        phone === "" ||
+        email === ""
+    ) {
+        alert("⚠️ يرجى تعبئة جميع البيانات");
+        return;
+    }
+
+    let person = {
+    name: name,
+    country: country,
+    university: university,
+    major: major,
+    phone: phone,
+    email: email,
+    dateAdded: new Date().toLocaleDateString("ar-EG")
+};
+
+    people.push(person);
+
+    localStorage.setItem("people", JSON.stringify(people));
+
+    showPeople();
+
+    alert("تمت إضافة الشخص بنجاح ✅");
+}
+
+
+function deletePerson(name) {
+    let confirmDelete = confirm("هل أنت متأكد أنك تريد حذف " + name + "؟");
+    if (confirmDelete) {
+    people = people.filter(function(person) {
+        return person.name !== name;
+    });
+    localStorage.setItem("people", JSON.stringify(people));
+    showPeople();
+    }
+    } 
+
+    
+
+    people.forEach(function(person) {
+        document.getElementById("peopleList").innerHTML +=
+            "<p>الاسم: " + person.name +
+            " | العمر: " + person.age +
+            " | المدينة: " + person.city +
+            " | الهاتف: " + person.phone +
+            "<br><button class=\"delete-btn\" onclick=\"deletePerson('" + person.name + "')\">🗑️ حذف</button></p>";
+});
+
+
+   
+
+function editPerson(name) {
+
+    let person = people.find(function(person) {
+        return person.name === name;
+    });
+
+    if (person) {
+
+        let newName = prompt("اكتب الاسم الجديد:", person.name);
+        let newCountry = prompt("اكتب البلد الجديد:", person.country);
+        let newUniversity = prompt("اكتب الجامعة الجديدة:", person.university);
+        let newMajor = prompt("اكتب التخصص الجديد:", person.major);
+        let newPhone = prompt("اكتب رقم الهاتف الجديد:", person.phone);
+        let newEmail = prompt("اكتب الإيميل الجديد:", person.email);
+let duplicatePerson = people.find(function(p) {
+    return p !== person &&
+           p.name.trim().toLowerCase() === newName.trim().toLowerCase();
+});
+
+if (duplicatePerson) {
+    alert("⚠️ لا يمكن استخدام هذا الاسم لأنه موجود لشخص آخر.");
+    return;
+}
+        if (
+            newName !== null &&
+            newCountry !== null &&
+            newUniversity !== null &&
+            newMajor !== null &&
+            newPhone !== null &&
+            newEmail !== null
+        ) {
+
+            person.name = newName;
+            person.country = newCountry;
+            person.university = newUniversity;
+            person.major = newMajor;
+            person.phone = newPhone;
+            person.email = newEmail;
+
+            localStorage.setItem("people", JSON.stringify(people));
+
+            showPeople();
+
+            alert("تم تعديل البيانات بنجاح ✅");
+        }
+    }
+}
+function searchPerson() {
+
+   let searchText =
+    document.getElementById("searchName").value.trim().toLowerCase();
+
+    if (searchText === "") {
+        document.getElementById("searchResult").innerHTML = "";
+        return;
+    }
+
+    let selectedCountry =
+        document.getElementById("countryFilter").value;
+
+    let selectedUniversity =
+        document.getElementById("universityFilter").value;
+
+    let selectedMajor =
+        document.getElementById("majorFilter").value;
+
+    let result = people.filter(function(person) {
+
+        let matchesFilters =
+            (selectedCountry === "" || person.country === selectedCountry) &&
+            (selectedUniversity === "" || person.university === selectedUniversity) &&
+            (selectedMajor === "" || person.major === selectedMajor);
+
+        let matchesSearch =
+            (person.name || "").toLowerCase().includes(searchText) ||
+            (person.country || "").toLowerCase().includes(searchText) ||
+            (person.university || "").toLowerCase().includes(searchText) ||
+            (person.major || "").toLowerCase().includes(searchText) ||
+            (person.phone || "").toLowerCase().includes(searchText) ||
+            (person.email || "").toLowerCase().includes(searchText);
+
+        return matchesFilters && matchesSearch;
+
+    });
+
+    if (result.length > 0) {
+
+        document.getElementById("searchResult").innerHTML =
+            result.map(function(person) {
+
+                return "<p>" +
+                    "<strong class=\"person-name\">" +
+                    "<a href=\"person.html?name=" +
+                    encodeURIComponent(person.name) +
+                    "\">👤 " + person.name + "</a>" +
+                    "</strong>" +
+                    "<br>🌍 <strong>البلد:</strong> " + person.country +
+                    "<br>🎓 <strong>الجامعة:</strong> " + person.university +
+                    "<br>📚 <strong>التخصص:</strong> " + person.major +
+                    "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.dateAdded || "غير محدد") +
+                    "<br>📞 <strong>رقم الهاتف:</strong> <a href=\"tel:" + person.phone + "\">" + person.phone + "</a>" +
+                    "<br>💬 <a href=\"https://wa.me/" +
+                    (person.phone || "").replace(/\D/g, "").replace(/^0/, "970") +
+                    "\" target=\"_blank\" class=\"whatsapp-btn\">🟢 فتح واتساب</a>" +
+                    "<br>📧 <strong>الإيميل:</strong> <a href=\"mailto:" +
+                    person.email + "\">" + person.email + "</a>" +
+                    "<br><button class=\"delete-btn\" onclick=\"deletePerson('" +
+                    person.name + "')\">🗑️ حذف</button>" +
+                    "<button class=\"edit-btn\" onclick=\"editPerson('" +
+                    person.name + "')\">🖊️ تعديل</button>" +
+                    "</p>";
+
+            }).join("");
+
+    } else {
+
+        document.getElementById("searchResult").innerHTML =
+            "<p>🔍 لا يوجد أشخاص يطابقون البحث والفلاتر الحالية ❌</p>";
+
+    }
+}
+
+function copyPhone(phone) {
+
+    navigator.clipboard.writeText(phone);
+
+    alert("تم نسخ رقم الهاتف 📋✅");
+}
+function copyEmail(email) {
+
+    navigator.clipboard.writeText(email);
+
+    alert("تم نسخ الإيميل 📋✅");
+}
+function showPeople() {
+
+    document.getElementById("peopleList").innerHTML = "";
+if (people.length === 0) {
+    alert("القائمة فاضية");
+    document.getElementById("peopleList").innerHTML =
+        "<p>👥 لا يوجد أشخاص مضافون حاليًا<br>ابدأ بإضافة أول شخص! ❤️</p>";
+    return;
+}
+    document.getElementById("count").innerHTML =
+    people.length;
+let countries = [];
+
+people.forEach(function(person) {
+
+    if (person.country && !countries.includes(person.country)) {
+        countries.push(person.country);
+    }
+
+});
+
+document.getElementById("countryCount").innerHTML =
+    countries.length;
+    let universities = [];
+
+people.forEach(function(person) {
+
+    if (person.university && !universities.includes(person.university)) {
+        universities.push(person.university);
+    }
+
+});
+
+document.getElementById("universityCount").innerHTML =
+    universities.length;
+    let majors = [];
+
+people.forEach(function(person) {
+
+    if (person.major && !majors.includes(person.major)) {
+        majors.push(person.major);
+    }
+
+});
+
+document.getElementById("majorCount").innerHTML =
+    majors.length;
+    people.forEach(function(person, index) {
+
+        document.getElementById("peopleList").innerHTML +=
+            "<p>" +
+            "<strong class=\"person-name\">#" + (index + 1) + " 👤 " + person.name + "</strong>" +
+            "<br>🌍 <strong>البلد:</strong> " + person.country +
+            "<br>🎓 <strong>الجامعة:</strong> " + person.university +
+            "<br>📚 <strong>التخصص:</strong> " + person.major +
+            "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.dateAdded || "غير محدد") +
+            "<br>📞 <strong>رقم الهاتف:</strong> <a href=\"tel:" + person.phone + "\">" + person.phone + "</a>" +
+            "<br><button class=\"copy-phone-btn\" onclick=\"copyPhone('" + person.phone + "')\">📋 نسخ الرقم</button>" +
+"<br>💬 <a href=\"https://wa.me/" + (person.phone || "").replace(/\D/g, "").replace(/^0/, "970") + "\" target=\"_blank\" class=\"whatsapp-btn\">🟢 فتح واتساب</a>" +
+"<br>📧 <strong>الإيميل:</strong> <a href=\"mailto:" + person.email + "\">" + person.email + "</a>" +
+"<br><button class=\"copy-email-btn\" onclick=\"copyEmail('" + person.email + "')\">📋 نسخ الإيميل</button>" +
+            "<br><button class=\"delete-btn\" onclick=\"deletePerson('" + person.name + "')\">🗑️ حذف</button>" +
+            "<button class=\"edit-btn\" onclick=\"editPerson('" + person.name + "')\">🖊️ تعديل</button></p>";
+
+    });
+    updateCountryFilter();
+    updateUniversityFilter();
+    updateMajorFilter();
+}
+function exportPeople() {
+
+    let data = JSON.stringify(people, null, 2);
+
+    let file = new Blob([data], {
+        type: "application/json"
+    });
+
+    let link = document.createElement("a");
+
+    link.href = URL.createObjectURL(file);
+    link.download = "people-data.json";
+
+    link.click();
+
+    URL.revokeObjectURL(link.href);
+}
+function importPeople() {
+
+    let file = document.getElementById("importFile").files[0];
+
+    if (!file) {
+        return;
+    }
+
+    let reader = new FileReader();
+
+    reader.onload = function(event) {
+if (!confirm("⚠️ استيراد البيانات سيستبدل البيانات الحالية. هل أنت متأكد؟")) {
+    document.getElementById("importFile").value = "";
+    return;
+}
+        try {
+
+            let importedPeople = JSON.parse(event.target.result);
+
+            if (!Array.isArray(importedPeople)) {
+                alert("❌ الملف غير صحيح");
+                return;
+            }
+
+            people = importedPeople;
+
+            localStorage.setItem("people", JSON.stringify(people));
+
+            showPeople();
+
+            alert("تم استيراد البيانات بنجاح ✅");
+
+        } catch (error) {
+
+            alert("❌ الملف غير صالح");
+        }
+    };
+
+    reader.readAsText(file);
+}
+function deleteAll() {
+
+    let confirmDelete = confirm("هل أنت متأكد أنك تريد حذف كل الأشخاص؟ 🗑️");
+
+    if (confirmDelete) {
+
+        people = [];
+
+        localStorage.setItem("people", JSON.stringify(people));
+
+        showPeople();
+
+        alert("تم حذف كل الأشخاص 🗑️");
+    }
+}
+function sortPeople() {
+
+    people.sort(function(a, b) {
+        return a.name.localeCompare(b.name, "ar");
+    });
+
+    localStorage.setItem("people", JSON.stringify(people));
+
+    showPeople();
+
+    alert("تم ترتيب الأشخاص حسب الاسم 🔤");
+}
+function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+
+    let darkButton = document.getElementById("darkModeBtn");
+
+    if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("darkMode", "enabled");
+        darkButton.innerHTML = "☀️ الوضع العادي";
+    } else {
+        localStorage.setItem("darkMode", "disabled");
+        darkButton.innerHTML = "🌙 الوضع الليلي";
+    }
+}
+if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark-mode");
+
+    document.getElementById("darkModeBtn").innerHTML =
+        "☀️ الوضع العادي";
+}
+function welcomeUser() {
+
+    let userName = localStorage.getItem("userName");
+
+    if (!userName) {
+        userName = prompt("ما اسمك؟");
+
+        if (userName) {
+            localStorage.setItem("userName", userName);
+        }
+    }
+
+    if (userName) {
+        document.getElementById("welcome").innerHTML =
+            "أهلاً وسهلاً يا " + userName + " 👋❤️";
+    }
+}
+showPeople();
+welcomeUser();
+function changeUserName() {
+
+    let newName = prompt("اكتب اسمك الجديد:");
+
+    if (newName) {
+        localStorage.setItem("userName", newName);
+
+        document.getElementById("welcome").innerHTML =
+            "أهلاً وسهلاً يا " + newName + " 👋❤️";
+
+        alert("تم تغيير الاسم بنجاح ✅");
+    }
+}
+function updateCountryFilter() {
+
+    let countryFilter = document.getElementById("countryFilter");
+
+    let countries = [];
+
+    people.forEach(function(person) {
+
+        if (person.country && !countries.includes(person.country)) {
+            countries.push(person.country);
+        }
+
+    });
+
+    countryFilter.innerHTML = '<option value="">🌍 كل البلدان</option>';
+
+    countries.forEach(function(country) {
+
+        countryFilter.innerHTML +=
+            '<option value="' + country + '">' + country + '</option>';
+
+    });
+}
+function filterByCountry() {
+
+    let selectedCountry = document.getElementById("countryFilter").value;
+
+    let result = people.filter(function(person) {
+
+        return selectedCountry === "" || person.country === selectedCountry;
+
+    });
+
+    document.getElementById("peopleList").innerHTML = "";
+
+    result.forEach(function(person, index) {
+
+        document.getElementById("peopleList").innerHTML +=
+            "<p>" +
+            "<strong class=\"person-name\">#" + (index + 1) + " 👤 " + person.name + "</strong>" +
+            "<br>🌍 <strong>البلد:</strong> " + person.country +
+            "<br>🎓 <strong>الجامعة:</strong> " + person.university +
+            "<br>📚 <strong>التخصص:</strong> " + person.major +
+            "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.dateAdded || "غير محدد") +
+            "<br>📞 <strong>رقم الهاتف:</strong> <a href=\"tel:" + person.phone + "\">" + person.phone + "</a>" +
+            "<br><button class=\"copy-phone-btn\" onclick=\"copyPhone('" + person.phone + "')\">📋 نسخ الرقم</button>" +
+            "<br>💬 <a href=\"https://wa.me/" + (person.phone || "").replace(/\D/g, "").replace(/^0/, "970") + "\" target=\"_blank\" class=\"whatsapp-btn\">🟢 فتح واتساب</a>" +
+            "<br>📧 <strong>الإيميل:</strong> <a href=\"mailto:" + person.email + "\">" + person.email + "</a>" +
+            "<br><button class=\"copy-email-btn\" onclick=\"copyEmail('" + person.email + "')\">📋 نسخ الإيميل</button>" +
+            "<br><button class=\"delete-btn\" onclick=\"deletePerson('" + person.name + "')\">🗑️ حذف</button>" +
+            "<button class=\"edit-btn\" onclick=\"editPerson('" + person.name + "')\">🖊️ تعديل</button>" +
+            "</p>";
+
+    });
+}
+function updateUniversityFilter() {
+
+    let universityFilter = document.getElementById("universityFilter");
+
+    let universities = [];
+
+    people.forEach(function(person) {
+
+        if (person.university && !universities.includes(person.university)) {
+            universities.push(person.university);
+        }
+
+    });
+
+    universityFilter.innerHTML = '<option value="">🎓 كل الجامعات</option>';
+
+    universities.forEach(function(university) {
+
+        universityFilter.innerHTML +=
+            '<option value="' + university + '">' + university + '</option>';
+
+    });
+}
+function filterByUniversity() {
+
+    let selectedUniversity =
+        document.getElementById("universityFilter").value;
+
+    let result = people.filter(function(person) {
+
+        return selectedUniversity === "" ||
+               person.university === selectedUniversity;
+
+    });
+
+    document.getElementById("peopleList").innerHTML = "";
+
+    result.forEach(function(person, index) {
+
+        document.getElementById("peopleList").innerHTML +=
+            "<p>" +
+            "<strong class=\"person-name\">#" + (index + 1) + " 👤 " + person.name + "</strong>" +
+            "<br>🌍 <strong>البلد:</strong> " + person.country +
+            "<br>🎓 <strong>الجامعة:</strong> " + person.university +
+            "<br>📚 <strong>التخصص:</strong> " + person.major +
+            "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.dateAdded || "غير محدد") +
+            "<br>📞 <strong>رقم الهاتف:</strong> " + person.phone +
+            "</p>";
+
+    });
+}
+function filterByMajor() {
+
+    let selectedCountry =
+        document.getElementById("countryFilter").value;
+
+    let selectedUniversity =
+        document.getElementById("universityFilter").value;
+
+    let selectedMajor =
+        document.getElementById("majorFilter").value;
+
+    let result = people.filter(function(person) {
+
+        return (
+            (selectedCountry === "" || person.country === selectedCountry) &&
+            (selectedUniversity === "" || person.university === selectedUniversity) &&
+            (selectedMajor === "" || person.major === selectedMajor)
+        );
+
+    });
+
+    document.getElementById("peopleList").innerHTML = "";
+
+    result.forEach(function(person, index) {
+
+        document.getElementById("peopleList").innerHTML +=
+            "<p>" +
+            "<strong class=\"person-name\">#" + (index + 1) + " 👤 " + person.name + "</strong>" +
+            "<br>🌍 <strong>البلد:</strong> " + person.country +
+            "<br>🎓 <strong>الجامعة:</strong> " + person.university +
+            "<br>📚 <strong>التخصص:</strong> " + person.major +
+            "<br>📅 <strong>تاريخ الإضافة:</strong> " + (person.dateAdded || "غير محدد") +
+            "<br>📞 <strong>رقم الهاتف:</strong> " + person.phone +
+            "</p>";
+
+    });
+}
+function clearFilters() {
+
+    document.getElementById("countryFilter").value = "";
+    document.getElementById("universityFilter").value = "";
+    document.getElementById("majorFilter").value = "";
+
+    showPeople();
+}
+function updateMajorFilter() {
+
+    let majorFilter = document.getElementById("majorFilter");
+
+    let majors = [];
+
+    people.forEach(function(person) {
+
+        if (person.major && !majors.includes(person.major)) {
+            majors.push(person.major);
+        }
+
+    });
+
+    majorFilter.innerHTML = '<option value="">📚 كل التخصصات</option>';
+
+    majors.forEach(function(major) {
+
+        majorFilter.innerHTML +=
+            '<option value="' + major + '">' + major + '</option>';
+
+    });
+}
+function clearSearch() {
+    document.getElementById("searchName").value = "";
+
+    document.getElementById("countryFilter").value = "";
+    document.getElementById("universityFilter").value = "";
+    document.getElementById("majorFilter").value = "";
+
+    document.getElementById("searchResult").innerHTML = "";
+
+    document.getElementById("searchName").focus();
+}
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+    </div>
+
+</body>
+</html>
