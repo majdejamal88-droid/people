@@ -887,7 +887,15 @@ body {
 </head>
 
 <body>
+<div id="authBox">
+    <h2>🔐 تسجيل الدخول</h2>
 
+    <input type="email" id="loginEmail" placeholder="الإيميل">
+    <input type="password" id="loginPassword" placeholder="كلمة المرور">
+
+    <button onclick="signUp()">إنشاء حساب</button>
+    <button onclick="signIn()">تسجيل الدخول</button>
+</div>
     <div class="container">
 
         <h1>برنامج معلومات الأشخاص</h1>
@@ -1566,10 +1574,43 @@ function clearSearch() {
 
     document.getElementById("searchName").focus();
 }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</script>
+const SUPABASE_URL = "https://rangzyutfitaumgskwzz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_K9px6RmMBeq2oXZd4kr4LQ_hLCT-a_z";
 
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+async function signUp() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
 
+    const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password
+    });
 
+    if (error) {
+        alert("❌ " + error.message);
+    } else {
+        alert("✅ تم إنشاء الحساب، تحقق من بريدك الإلكتروني.");
+    }
+}
 
+async function signIn() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
+
+    if (error) {
+        alert("❌ " + error.message);
+    } else {
+        alert("✅ تم تسجيل الدخول بنجاح");
+    }
+}
 
 
 
@@ -1583,3 +1624,4 @@ function clearSearch() {
 
 </body>
 </html>
+
