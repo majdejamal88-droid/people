@@ -1045,14 +1045,21 @@ alert("✅ تمت إضافة الشخص بنجاح");
 }
 
 
-function deletePerson(name) {
+async function deletePerson(name) {
     let confirmDelete = confirm("هل أنت متأكد أنك تريد حذف " + name + "؟");
     if (confirmDelete) {
-    people = people.filter(function(person) {
-        return person.name !== name;
-    });
-    localStorage.setItem("people", JSON.stringify(people));
-    showPeople();
+   const { error } = await supabaseClient
+    .from("people")
+    .delete()
+    .eq("name", name);
+
+if (error) {
+    alert("❌ حدث خطأ أثناء حذف الشخص: " + error.message);
+    return;
+}
+
+await loadPeopleFromSupabase();
+alert("✅ تم حذف الشخص بنجاح");
     }
     } 
 
@@ -1070,7 +1077,7 @@ function deletePerson(name) {
 
    
 
-function editPerson(name) {
+async function editPerson(name) {
 
     let person = people.find(function(person) {
         return person.name === name;
@@ -1084,6 +1091,15 @@ function editPerson(name) {
         let newMajor = prompt("اكتب التخصص الجديد:", person.major);
         let newPhone = prompt("اكتب رقم الهاتف الجديد:", person.phone);
         let newEmail = prompt("اكتب الإيميل الجديد:", person.email);
+
+        if (
+            newName !== null &&
+            newCountry !== null &&
+            newUniversity !== null &&
+            newMajor !== null &&
+            newPhone !== null &&
+            newEmail !== null
+        ) {
 let duplicatePerson = people.find(function(p) {
     return p !== person &&
            p.name.trim().toLowerCase() === newName.trim().toLowerCase();
@@ -1093,15 +1109,6 @@ if (duplicatePerson) {
     alert("⚠️ لا يمكن استخدام هذا الاسم لأنه موجود لشخص آخر.");
     return;
 }
-        if (
-            newName !== null &&
-            newCountry !== null &&
-            newUniversity !== null &&
-            newMajor !== null &&
-            newPhone !== null &&
-            newEmail !== null
-        ) {
-
             person.name = newName;
             person.country = newCountry;
             person.university = newUniversity;
@@ -1109,11 +1116,26 @@ if (duplicatePerson) {
             person.phone = newPhone;
             person.email = newEmail;
 
-            localStorage.setItem("people", JSON.stringify(people));
+            const { error } = await supabaseClient
+    .from("people")
+    .update({
+        name: newName,
+        country: newCountry,
+        university: newUniversity,
+        major: newMajor,
+        phone: newPhone,
+        email: newEmail
+    })
+    .eq("id", person.id);
 
-            showPeople();
+if (error) {
+    alert("❌ حدث خطأ أثناء تعديل البيانات: " + error.message);
+    return;
+}
 
-            alert("تم تعديل البيانات بنجاح ✅");
+await loadPeopleFromSupabase();
+
+alert("تم تعديل البيانات بنجاح ✅");
         }
     }
 }
