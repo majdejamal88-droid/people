@@ -87,15 +87,26 @@
 <button onclick="location.reload()">🔄 تحديث الصفحة</button>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = "https://rangzyutfitaumgskwzz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_K9px6RmMBeq2oXZd4kr4LQ_hLCT-a_z";
 
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let personName = new URLSearchParams(window.location.search).get("name");
 
-let people = JSON.parse(localStorage.getItem("people")) || [];
+let people = [];
 
-let person = people.find(function(person) {
-    return person.name === personName;
-});
+async function loadPersonDetails() {
+  const { data: person, error } = await supabaseClient
+    .from("people")
+    .select("*")
+    .eq("name", personName)
+    .maybeSingle();
+
+if (error) {
+    console.error("خطأ في تحميل بيانات الشخص:", error);
+}
 
 if (person) {
 
@@ -104,7 +115,11 @@ if (person) {
         "<p>🌍 البلد: " + person.country + "</p>" +
         "<p>🎓 الجامعة: " + person.university + "</p>" +
         "<p>📚 التخصص: " + person.major + "</p>" +
-        "<p>📅 تاريخ الإضافة: " + (person.dateAdded || "غير محدد") + "</p>" +
+       "<p>📅 تاريخ الإضافة: " +
+(person.date_added
+    ? new Date(person.date_added).toLocaleDateString("ar-EG")
+    : (person.dateAdded || "غير محدد")) +
+"</p>" +
         "<p>📞 رقم الهاتف: <a href=\"tel:" + person.phone + "\">" + person.phone + "</a></p>" +
         "<button onclick=\"copyPhone('" + person.phone + "')\">📋 نسخ الرقم</button>" +
         "<a href=\"https://wa.me/" +
@@ -120,7 +135,7 @@ if (person) {
         "<p>ربما تم حذف بياناته أو أن الرابط غير صحيح.</p>";
 
 }
-
+loadPersonDetails();
     
 function copyPhone(phone) {
     navigator.clipboard.writeText(phone);
@@ -190,7 +205,11 @@ function copyAllDetails() {
     "البلد: " + person.country + "\n" +
     "الجامعة: " + person.university + "\n" +
     "التخصص: " + person.major + "\n" +
-    "تاريخ الإضافة: " + (person.dateAdded || "غير محدد") + "\n" +
+   "تاريخ الإضافة: " +
+(person.date_added
+    ? new Date(person.date_added).toLocaleDateString("ar-EG")
+    : (person.dateAdded || "غير محدد")) +
+"\n" +
     "رقم الهاتف: " + person.phone + "\n" +
     "الإيميل: " + person.email + "\n" +
     "واتساب: " + person.phone;
