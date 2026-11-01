@@ -1,17 +1,21 @@
 
+
 name: Supabase Health Check
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '17 8,20 * * *'
-  workflow_dispatch:
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Check Supabase API
+      - name: Check DNS and Supabase
         run: |
-          curl --fail --silent --show-error \
-            --max-time 20 \
-            https://rangzyutfitaugmskwzz.supabase.co/auth/v1/health
+          echo "Checking DNS..."
+          getent hosts rangzyutfitaumgskwzz.supabase.co || true
+
+          echo "Checking Supabase..."
+          curl --verbose --max-time 20 \
+            https://rangzyutfitaumgskwzz.supabase.co/auth/v1/health
