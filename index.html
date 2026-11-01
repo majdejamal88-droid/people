@@ -895,6 +895,9 @@ body {
 
     <button onclick="signUp()">إنشاء حساب</button>
     <button onclick="signIn()">تسجيل الدخول</button>
+    <button onclick="resetPassword()">
+    🔑 نسيت كلمة المرور؟
+</button>
 </div>
     <div class="container">
 
@@ -1636,6 +1639,32 @@ const SUPABASE_URL = "https://rangzyutfitaumgskwzz.supabase.co";
 const SUPABASE_KEY = "sb_publishable_K9px6RmMBeq2oXZd4kr4LQ_hLCT-a_z";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+supabaseClient.auth.onAuthStateChange(async (event) => {
+    if (event === "PASSWORD_RECOVERY") {
+        setTimeout(async () => {
+            const newPassword = prompt("🔑 أدخل كلمة المرور الجديدة (6 أحرف على الأقل):");
+
+            if (!newPassword) return;
+
+            if (newPassword.length < 6) {
+                alert("❌ كلمة المرور قصيرة جدًا");
+                return;
+            }
+
+            const { error } = await supabaseClient.auth.updateUser({
+                password: newPassword
+            });
+
+            if (error) {
+                alert("❌ " + error.message);
+            } else {
+                alert("✅ تم تغيير كلمة المرور بنجاح");
+                await supabaseClient.auth.signOut();
+                window.location.href = window.location.origin + "/people/";
+            }
+        }, 0);
+    }
+});
 async function signUp() {
     const email = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
@@ -1666,6 +1695,24 @@ async function signIn() {
     } else {
         alert("✅ تم تسجيل الدخول بنجاح");
         await loadPeopleFromSupabase();
+    }
+}
+async function resetPassword() {
+    const email = document.getElementById("loginEmail").value.trim();
+
+    if (!email) {
+        alert("❌ الرجاء إدخال البريد الإلكتروني أولاً");
+        return;
+    }
+
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/people/"
+    });
+
+    if (error) {
+        alert("❌ " + error.message);
+    } else {
+        alert("✅ إذا كان البريد مسجلاً، سيتم إرسال رابط استعادة كلمة المرور");
     }
 }
 async function loadPeopleFromSupabase() {
