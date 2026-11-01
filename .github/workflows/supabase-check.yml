@@ -1,0 +1,17 @@
+
+name: Supabase Health Check
+
+on:
+  schedule:
+    - cron: '17 8,20 * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Supabase API
+        run: |
+          curl --fail --silent --show-error \
+            --max-time 20 \
+            https://rangzyutfitaugmskwzz.supabase.co/auth/v1/health
